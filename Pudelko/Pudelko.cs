@@ -37,9 +37,9 @@ namespace Pudelko.Lib
             get => Math.Round(this._heigth, 3);
         }
 
-        public double Objetosc() => Math.Round((A / (double)_unit) * (B / (double)_unit) * (C / (double)_unit), 9);
+        public double Objetosc => Math.Round((A / (double)_unit) * (B / (double)_unit) * (C / (double)_unit), 9);
 
-        public double Pole() => Math.Round((2 * (A / (double)_unit) * (B / (double)_unit)) + (4 * (B / (double)_unit) * (C / (double)_unit)), 6);
+        public double Pole => Math.Round((2 * (A / (double)_unit) * (B / (double)_unit)) + (4 * (B / (double)_unit) * (C / (double)_unit)), 6);
 
         public override string ToString()
         {
@@ -85,10 +85,34 @@ namespace Pudelko.Lib
 
         public override int GetHashCode() => (A / (double)_unit, B / (double)_unit, C / (double)_unit).GetHashCode();
 
-        public bool Equals(Pudelko other)
+        public override bool Equals(object obj)
         {
-            throw new NotImplementedException();
+            if (obj is Pudelko)
+                return (this as IEquatable<Pudelko>).Equals(obj as Pudelko);
+
+            return false;
         }
+
+        public bool Equals(Pudelko p)
+        {
+            if (p is null)
+                return false;
+            if (Object.ReferenceEquals(this, p)) return true;
+
+            return this.Objetosc == p.Objetosc;
+        }
+
+        public static bool Equals(Pudelko p1, Pudelko p2)
+        {
+            if ((p1 is null) && (p2 is null)) return true;
+            if (p1 is null) return false;
+
+            return p1.Equals(p2);
+        }
+
+        public static bool operator ==(Pudelko p1, Pudelko p2) => Pudelko.Equals(p1, p2);
+
+        public static bool operator !=(Pudelko p1, Pudelko p2) => !(p1 == p2);
     }
 
     public enum UnitOfMeasure
