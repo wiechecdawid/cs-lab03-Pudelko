@@ -9,12 +9,15 @@ namespace Pudelko.Lib
         private readonly double _heigth;
         private readonly double _width;
         private readonly UnitOfMeasure _unit;
+        private readonly double[] _indexArr;
 
         public Pudelko(double a = 0.1, double b = 0.1, double c = 0.1, UnitOfMeasure unit = UnitOfMeasure.meter)
         {
             _length = (a > 0) && (a / (double)unit <= 10.0) ? a : throw new ArgumentException(a.ToString());
             _width = (b > 0) && (b / (double)unit <= 10.0) ? b : throw new ArgumentException(b.ToString());
             _heigth = (c > 0) && (c / (double)unit <= 10.0) ? c : throw new ArgumentException(c.ToString());
+
+            _indexArr = new double[] { A, B, C };
         }
 
         public Pudelko() : this(0.1, 0.1, 0.1, UnitOfMeasure.meter) { }
@@ -53,7 +56,7 @@ namespace Pudelko.Lib
             return string.Format("{2} {0} {1} {3} {0} {1} {4} {0}", unit, x, a.ToString("F3"), b.ToString("F3"), c.ToString("F3"));
         }
 
-        public string ToString(string format, IFormatProvider provider)
+        public string ToString(string format, IFormatProvider provider = null)
         {
             if(String.IsNullOrEmpty(format)) format = "m";
             if (provider == null) provider = CultureInfo.CurrentCulture;
@@ -113,6 +116,15 @@ namespace Pudelko.Lib
         public static bool operator ==(Pudelko p1, Pudelko p2) => Pudelko.Equals(p1, p2);
 
         public static bool operator !=(Pudelko p1, Pudelko p2) => !(p1 == p2);
+
+        public static explicit operator double[] (Pudelko p) => new double[] {p.A, p.B, p.C};
+
+        public static implicit operator Pudelko ((int, int, int) t) => new Pudelko(t.Item1, t.Item2, t.Item3, UnitOfMeasure.milimeter);
+
+        public double this[int i]
+        {
+            get => _indexArr[i];
+        }
     }
 
     public enum UnitOfMeasure
