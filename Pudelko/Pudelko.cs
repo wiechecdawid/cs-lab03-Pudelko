@@ -106,25 +106,24 @@ namespace Pudelko.Lib
             if (provider == null) provider = CultureInfo.CurrentCulture;
 
             char x = '\u00D7';
-            double a = 0.1, b = 0.1, c = 0.1;
+            string a = "", b = "", c = "";
 
             switch(format)
             {
                 case "m":
-                    ToString();
-                    break;
+                    return ToString();
                 case "cm":
-                    a = Math.Round(A * (double)_unit / 100, 1);
-                    b = Math.Round(B * (double)_unit / 100, 1);
-                    c = Math.Round(C * (double)_unit / 100, 1);
+                    a = Math.Round(A * 100, 1).ToString("F1");
+                    b = Math.Round(B * 100, 1).ToString("F1");
+                    c = Math.Round(C * 100, 1).ToString("F1");
                     break;
                 case "mm":
-                    a = Math.Round(A * (double)_unit / 1000);
-                    b = Math.Round(B * (double)_unit / 1000);
-                    c = Math.Round(C * (double)_unit / 1000);
+                    a = Math.Round(A * 1000).ToString();
+                    b = Math.Round(B * 1000).ToString();
+                    c = Math.Round(C * 1000).ToString();
                     break;
                 default:
-                    throw new ArgumentException(format);
+                    throw new FormatException(format);
             }
 
             return string.Format("{2} {0} {1} {3} {0} {1} {4} {0}", format, x, a, b, c);
