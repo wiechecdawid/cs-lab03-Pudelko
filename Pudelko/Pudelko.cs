@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace Pudelko.Lib
 {
-    public sealed class Pudelko : IFormattable, IEquatable<Pudelko>
+    public sealed class Pudelko : IFormattable, IEquatable<Pudelko>, IEnumerable<double>
     {
         private readonly double _length;
         private readonly double _heigth;
@@ -11,13 +13,55 @@ namespace Pudelko.Lib
         private readonly UnitOfMeasure _unit;
         private readonly double[] _indexArr;
 
-        public Pudelko(double a = 0.1, double b = 0.1, double c = 0.1, UnitOfMeasure unit = UnitOfMeasure.meter)
+        public Pudelko(double a, double b, double c, UnitOfMeasure unit = UnitOfMeasure.meter)
         {
-            _length = (a > 0) && (a / (double)unit <= 10.0) ? a : throw new ArgumentException(a.ToString());
-            _width = (b > 0) && (b / (double)unit <= 10.0) ? b : throw new ArgumentException(b.ToString());
-            _heigth = (c > 0) && (c / (double)unit <= 10.0) ? c : throw new ArgumentException(c.ToString());
+            _length = (a > 0) && (a / (double)unit <= 10.0) ? a / (double)unit : throw new ArgumentOutOfRangeException(a.ToString());
+            _width = (b > 0) && (b / (double)unit <= 10.0) ? b / (double)unit : throw new ArgumentOutOfRangeException(b.ToString());
+            _heigth = (c > 0) && (c / (double)unit <= 10.0) ? c / (double)unit : throw new ArgumentOutOfRangeException(c.ToString());
+
+            if (A == 0 || B == 0 || C == 0)
+                throw new ArgumentOutOfRangeException();
 
             _indexArr = new double[] { A, B, C };
+            _unit = unit;
+        }
+
+        public Pudelko(double a, double b, UnitOfMeasure unit = UnitOfMeasure.meter)
+        {
+            _length = (a > 0) && (a / (double)unit <= 10.0) ? a / (double)unit : throw new ArgumentOutOfRangeException(a.ToString());
+            _width = (b > 0) && (b / (double)unit <= 10.0) ? b / (double)unit : throw new ArgumentOutOfRangeException(b.ToString());
+
+            if (A == 0 || B == 0)
+                throw new ArgumentOutOfRangeException();
+
+            _heigth = 0.1;
+
+            _indexArr = new double[] { A, B, C };
+            _unit = unit;
+        }
+
+        public Pudelko(double a, UnitOfMeasure unit = UnitOfMeasure.meter)
+        {
+            _length = (a > 0) && (a / (double)unit <= 10.0) ? a / (double)unit : throw new ArgumentOutOfRangeException(a.ToString());
+
+            if (A == 0)
+                throw new ArgumentOutOfRangeException();
+
+            _width = 0.1;
+            _heigth = 0.1;
+
+            _indexArr = new double[] { A, B, C };
+            _unit = unit;
+        }
+
+        public Pudelko(UnitOfMeasure unit)
+        {
+            _length = 0.1;
+            _width = 0.1;
+            _heigth = 0.1;
+
+            _indexArr = new double[] { A, B, C };
+            _unit = unit;
         }
 
         public Pudelko() : this(0.1, 0.1, 0.1, UnitOfMeasure.meter) { }
@@ -25,31 +69,31 @@ namespace Pudelko.Lib
         //Length of the box rounded to 3 decimals
         public double A
         {
-            get => Math.Round(this._length, 3);
+            get => Math.Truncate(1000 * this._length) / 1000;
         }
 
         //Width of the box rounded to 3 decimals
         public double B
         {
-            get => Math.Round(this._width, 3);
+            get => Math.Truncate(1000 * this._width) / 1000;
         }
 
         //Heigth of the box rounded to 3 decimals
         public double C
         {
-            get => Math.Round(this._heigth, 3);
+            get => Math.Truncate(1000 * this._heigth) / 1000;
         }
 
-        public double Objetosc => Math.Round((A / (double)_unit) * (B / (double)_unit) * (C / (double)_unit), 9);
+        public double Objetosc => Math.Round(A * B * C, 9);
 
-        public double Pole => Math.Round((2 * (A / (double)_unit) * (B / (double)_unit)) + (4 * (B / (double)_unit) * (C / (double)_unit)), 6);
+        public double Pole => Math.Round((2 * A * B) + (4 * B * C), 6);
 
         public override string ToString()
         {
             char x = '\u00D7';
-            double a = A / (double)_unit;
-            double b = B / (double)_unit;
-            double c = C / (double)_unit;
+            double a = A ;
+            double b = B;
+            double c = C;
 
             string unit = "m";
 
@@ -86,7 +130,7 @@ namespace Pudelko.Lib
             return string.Format("{2} {0} {1} {3} {0} {1} {4} {0}", format, x, a, b, c);
         }
 
-        public override int GetHashCode() => (A / (double)_unit, B / (double)_unit, C / (double)_unit).GetHashCode();
+        public override int GetHashCode() => (A, B, C).GetHashCode();
 
         public override bool Equals(object obj)
         {
@@ -113,6 +157,16 @@ namespace Pudelko.Lib
             return p1.Equals(p2);
         }
 
+        public IEnumerator<double> GetEnumerator()
+        {
+            foreach(var i in _indexArr)
+            {
+                yield return i;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
         public static bool operator ==(Pudelko p1, Pudelko p2) => Pudelko.Equals(p1, p2);
 
         public static bool operator !=(Pudelko p1, Pudelko p2) => !(p1 == p2);
@@ -124,6 +178,20 @@ namespace Pudelko.Lib
         public double this[int i]
         {
             get => _indexArr[i];
+        }
+
+        public static Pudelko Parse(string input)
+        {
+            List<double> sizes = new List<double>();
+            string[] inputs = input.Split(' ');
+
+            foreach(var i in inputs)
+            {
+                if (double.TryParse(i, out double temp))
+                    sizes.Add(temp);
+            }
+
+            return sizes.Count == 3 ? new Pudelko(sizes[0], sizes[1], sizes[2]) : throw new FormatException($"Incorrect string format: {input}");
         }
     }
 
