@@ -170,9 +170,24 @@ namespace Pudelko.Lib
 
         public static bool operator !=(Pudelko p1, Pudelko p2) => !(p1 == p2);
 
+        public static Pudelko operator +(Pudelko p1, Pudelko p2)
+        {
+            double length = p1.A > p2.A ? p1.A : p2.A;
+            double width = p1.B > p2.B ? p1.B : p2.B;
+            double heigth = 0.1;
+
+            if ((p1.A < p2.A && p1.B > p2.B) || (p1.A > p2.A && p1.B < p2.B))
+                heigth = p1.C + p2.C;
+            else
+                heigth = p1.C > p2.C ? p1.C : p2.C;
+
+            return new Pudelko(length, width, heigth);
+        }
+
         public static explicit operator double[] (Pudelko p) => new double[] {p.A, p.B, p.C};
 
         public static implicit operator Pudelko ((int, int, int) t) => new Pudelko(t.Item1, t.Item2, t.Item3, UnitOfMeasure.milimeter);
+
 
         public double this[int i]
         {
