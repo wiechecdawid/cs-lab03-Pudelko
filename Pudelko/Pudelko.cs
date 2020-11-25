@@ -86,7 +86,7 @@ namespace Pudelko.Lib
 
         public double Objetosc => Math.Round(A * B * C, 9);
 
-        public double Pole => Math.Round((2 * A * B) + (4 * B * C), 6);
+        public double Pole => Math.Round((2 * A * B) + (2 * A * C) + (2 * B * C), 6);
 
         public override string ToString()
         {
@@ -145,7 +145,11 @@ namespace Pudelko.Lib
                 return false;
             if (Object.ReferenceEquals(this, p)) return true;
 
-            return this.Objetosc == p.Objetosc;
+            return this.Objetosc == p.Objetosc &&
+                    ((this.A == p.A || this.A == p.B || this.A == p.C) &&
+                     (this.B == p.A || this.B == p.B || this.B == p.C) &&
+                     (this.C == p.A || this.C == p.B || this.C == p.C)
+                    );
         }
 
         public static bool Equals(Pudelko p1, Pudelko p2)
@@ -172,14 +176,14 @@ namespace Pudelko.Lib
 
         public static Pudelko operator +(Pudelko p1, Pudelko p2)
         {
-            double length = p1.A > p2.A ? p1.A : p2.A;
-            double width = p1.B > p2.B ? p1.B : p2.B;
+            double length = p1.A > p2.A ? p1.A + 0.001 : p2.A + 0.001;
+            double width = p1.B > p2.B ? p1.B + 0.001 : p2.B + 0.001;
             double heigth = 0.1;
 
             if ((p1.A < p2.A && p1.B > p2.B) || (p1.A > p2.A && p1.B < p2.B))
-                heigth = p1.C + p2.C;
+                heigth = p1.C + p2.C + 0.001;
             else
-                heigth = p1.C > p2.C ? p1.C : p2.C;
+                heigth = p1.C > p2.C ? p1.C + 0.001 : p2.C + 0.001;
 
             return new Pudelko(length, width, heigth);
         }

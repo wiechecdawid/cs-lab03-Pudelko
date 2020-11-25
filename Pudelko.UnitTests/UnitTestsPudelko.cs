@@ -449,15 +449,76 @@ namespace PudelkoUnitTests
 
         #region Pole, Objętość ===================================
         // ToDo
+        [DataTestMethod]
+        [DataRow(1, 2, 3, 22)]
+        [DataRow(2.2, 2.2, 1, 18.48)]
+        public void Pole_ReturnsArea(double a, double b, double c, double expectedArea)
+        {
+            var p = new P(a, b, c);
+
+            Assert.AreEqual(expectedArea, p.Pole);
+        }
+
+
+        [DataTestMethod]
+        [DataRow(5, 0.5, 10, 25)]
+        [DataRow(3, 4, 5, 60)]
+        [DataRow(1, 9, 3.2, 28.8)]
+        public void Objetosc_Returns_Volume(double a, double b, double c, double expectedVolume)
+        {
+            var p = new P(a, b, c);
+
+            Assert.AreEqual(expectedVolume, p.Objetosc);
+        }
 
         #endregion
 
         #region Equals ===========================================
-        // ToDo
+        [DataTestMethod]
+        [DataRow(1, 1, 2, 2, 3, 3)]
+        [DataRow(1, 2, 2, 3, 3, 1)]
+        public void Equals_ReturnsTrue(double a1, double a2, double b1, double b2, double c1, double c2)
+        {
+            var p1 = new P(a1, b1, c1);
+            var p2 = new P(a2, b2, c2);
+
+            Assert.IsTrue(p1.Equals(p2));
+        }
+
+        [DataTestMethod]
+        [DataRow(1, 2, 4, 3, 1, 3, false)]
+        [DataRow(1, 2, 6, 3, 1, 1, false)]
+        public void Equals_ReturnsFalse(double a1, double a2, double b1, double b2, double c1, double c2, bool expectedResult)
+        {
+            var p1 = new P(a1, b1, c1);
+            var p2 = new P(a2, b2, c2);
+
+            Assert.AreEqual(expectedResult, p1.Equals(p2));
+        }
         #endregion
 
         #region Operators overloading ===========================
-        // ToDo
+        [DataTestMethod]
+        [DataRow(1, 2, 2, 3, 3, 1, true)]
+        [DataRow(1, 2, 6, 3, 1, 1, false)]
+        public void DoubleEqualSignOverload_ChecksIfEquals(double a1, double a2, double b1, double b2, double c1, double c2, bool expectedResult)
+        {
+            var p1 = new P(a1, b1, c1);
+            var p2 = new P(a2, b2, c2);
+
+            Assert.AreEqual(expectedResult, p1 == p2);
+        }
+
+        [DataTestMethod]
+        [DataRow(1, 2, 2, 3, 3, 1, false)]
+        [DataRow(1, 2, 6, 3, 1, 1, true)]
+        public void NonEqualSignOverload_ChecksIfEquals(double a1, double a2, double b1, double b2, double c1, double c2, bool expectedResult)
+        {
+            var p1 = new P(a1, b1, c1);
+            var p2 = new P(a2, b2, c2);
+
+            Assert.AreEqual(expectedResult, p1 != p2);
+        }
         #endregion
 
         #region Conversions =====================================
