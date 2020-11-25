@@ -9,7 +9,7 @@ namespace Pudelko.CLI
     {
         public static P Kompresuj(this P pudelko)
         {
-            double a = Math.Pow(pudelko.Objetosc, 1 / 3);
+            double a = Math.Pow(pudelko.Objetosc, 1.0/3.0);
 
             return new P(a, a, a);
         }

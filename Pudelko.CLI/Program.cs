@@ -35,6 +35,13 @@ namespace Pudelko.CLI
 
             foreach(var p in boxes)
                 Console.WriteLine($"Wymiary: {p.ToString()} Objetosc: {p.Objetosc} Pole powierzchni: {p.Pole}");
+
+            Console.WriteLine();
+
+            Console.WriteLine(P.Parse("5.2 m x 3.6 m x 2.5 m"));
+            var pudelko = new P(1, 2, 4);
+            Console.WriteLine(pudelko.Objetosc);
+            Console.WriteLine(pudelko.Kompresuj());
         }
     }
 }
